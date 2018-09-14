@@ -3,7 +3,8 @@ package com.fasterxml.jackson.databind.deser;
 import java.beans.ConstructorProperties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ReadOrWriteOnlyTest extends BaseMapTest
 {
@@ -30,6 +31,33 @@ public class ReadOrWriteOnlyTest extends BaseMapTest
         private String lastName = "Bar";
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        public String getFullName() {
+            return firstName + " " + lastName;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String n) {
+            firstName = n;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String n) {
+            lastName = n;
+        }
+    }
+
+    public static class Pojo1890
+    {
+        private String firstName = "Foo";
+        private String lastName = "Bar";
+
+        @JsonProperty(value = "full_name", access = JsonProperty.Access.READ_ONLY) // for [databind#1890]
         public String getFullName() {
             return firstName + " " + lastName;
         }
@@ -90,6 +118,13 @@ public class ReadOrWriteOnlyTest extends BaseMapTest
     {
         String json = MAPPER.writeValueAsString(new Pojo935());
         Pojo935 result = MAPPER.readValue(json, Pojo935.class);
+        assertNotNull(result);
+    }
+
+    public void testReadOnly1890() throws Exception
+    {
+        String json = MAPPER.writeValueAsString(new Pojo1890());
+        Pojo1890 result = MAPPER.readValue(json, Pojo1890.class);
         assertNotNull(result);
     }
 
