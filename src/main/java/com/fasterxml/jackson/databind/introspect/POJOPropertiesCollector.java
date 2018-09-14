@@ -794,7 +794,11 @@ public class POJOPropertiesCollector
                 // 01-May-2018, tatu: I have a feeling this will need to be revisited at some point,
                 //   to avoid removing some types of removals, possibly. But will do for now.
                 if (_ignoredPropertyNames != null) {
-                    _ignoredPropertyNames.remove(name);
+                    if (_ignoredPropertyNames.remove(prop.getInternalName())) {
+                        _ignoredPropertyNames.add(name);
+                    } else {
+                        _ignoredPropertyNames.remove(name);
+                    }
                 }
             }
         }
